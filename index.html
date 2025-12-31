@@ -1,50 +1,58 @@
-
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PDFauto.ai | Minimalist AI PDF Tools</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script>
-      // Apply theme immediately to prevent flash
-      if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
-    </script>
-    <style>
-      body {
-        font-family: 'Inter', sans-serif;
-        -webkit-font-smoothing: antialiased;
-        transition: background-color 0.3s ease, color 0.3s ease;
-      }
-      .dark body {
-        background-color: #0a0a0a;
-        color: #f5f5f5;
-      }
-      body {
-        background-color: #ffffff;
-        color: #171717;
-      }
-      /* Custom scrollbar */
-      ::-webkit-scrollbar {
-        width: 6px;
-      }
-      ::-webkit-scrollbar-track {
-        background: transparent; 
-      }
-      .dark ::-webkit-scrollbar-thumb {
-        background: #262626; 
-        border-radius: 10px;
-      }
-      ::-webkit-scrollbar-thumb {
-        background: #e5e5e5; 
-        border-radius: 10px;
-      }
-    </style>
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PDFauto.ai | Minimalist AI PDF Tools</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6209113535507140"
+    crossorigin="anonymous"></script>
+  <script>
+    // Apply theme immediately to prevent flash
+    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  </script>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .dark body {
+      background-color: #0a0a0a;
+      color: #f5f5f5;
+    }
+
+    body {
+      background-color: #ffffff;
+      color: #171717;
+    }
+
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .dark ::-webkit-scrollbar-thumb {
+      background: #262626;
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #e5e5e5;
+      border-radius: 10px;
+    }
+  </style>
   <script type="importmap">
 {
   "imports": {
@@ -60,10 +68,12 @@
   }
 }
 </script>
-<link rel="stylesheet" href="/index.css">
+  <link rel="stylesheet" href="/index.css">
 </head>
-  <body class="selection:bg-neutral-200 dark:selection:bg-neutral-800">
-    <div id="root"></div>
+
+<body class="selection:bg-neutral-200 dark:selection:bg-neutral-800">
+  <div id="root"></div>
   <script type="module" src="/index.tsx"></script>
 </body>
+
 </html>

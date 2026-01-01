@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { supabase } from '../lib/supabase';
-import { X, Mail, Lock, Loader2, ArrowLeft } from 'lucide-react';
+import { X, Mail, Lock, Loader2, ArrowLeft, Eye, EyeOff, CheckCircle2 } from 'lucide-react';
 
 interface AuthModalProps {
     isOpen: boolean;
@@ -14,6 +14,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
     const [authMode, setAuthMode] = useState<AuthMode>('signIn');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null);
 
@@ -34,7 +35,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                     },
                 });
                 if (error) throw error;
-                setMessage({ type: 'success', text: 'Check your email for the verification link!' });
+                setMessage({ type: 'success', text: 'Welcome! Check your email to verify your account.' });
             } else if (authMode === 'signIn') {
                 const { error } = await supabase.auth.signInWithPassword({
                     email,
@@ -47,7 +48,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                     redirectTo: `${window.location.origin}/reset-password`,
                 });
                 if (error) throw error;
-                setMessage({ type: 'success', text: 'Password reset link sent to your email!' });
+                setMessage({ type: 'success', text: 'Security link sent! Check your inbox to reset your password.' });
             }
         } catch (error: any) {
             setMessage({ type: 'error', text: error.message });
@@ -60,82 +61,96 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
         setAuthMode(authMode === 'signIn' ? 'signUp' : 'signIn');
         setMessage(null);
         setPassword('');
+        setShowPassword(false);
     };
 
     return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
-            <div className="relative w-full max-w-md bg-white dark:bg-neutral-900 rounded-3xl p-8 shadow-2xl border border-neutral-200 dark:border-neutral-800">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-md animate-in fade-in duration-300">
+            <div className="relative w-full max-w-md bg-white/90 dark:bg-neutral-900/90 backdrop-blur-xl rounded-[2.5rem] p-10 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.3)] border border-white/20 dark:border-neutral-800/50 overflow-hidden">
+                {/* Decorative background gradients */}
+                <div className="absolute -top-24 -right-24 w-48 h-48 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
+                <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-purple-500/10 rounded-full blur-3xl pointer-events-none" />
+
                 <button
                     onClick={onClose}
-                    className="absolute top-4 right-4 p-2 rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors"
+                    className="absolute top-6 right-6 p-2.5 rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-all transform hover:rotate-90"
                 >
-                    <X className="w-5 h-5 text-neutral-500" />
+                    <X className="w-5 h-5" />
                 </button>
 
                 {authMode === 'forgotPassword' && (
                     <button
                         onClick={() => setAuthMode('signIn')}
-                        className="absolute top-4 left-4 p-2 rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors flex items-center gap-2 text-sm text-neutral-500"
+                        className="absolute top-6 left-6 p-2.5 rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-800 text-neutral-400 hover:text-neutral-900 dark:hover:text-white transition-all flex items-center gap-2 group"
                     >
-                        <ArrowLeft className="w-4 h-4" />
-                        <span>Back</span>
+                        <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
                     </button>
                 )}
 
-                <div className="text-center mb-8">
-                    <h2 className="text-2xl font-black text-neutral-900 dark:text-white mb-2">
-                        {authMode === 'signIn' ? 'Welcome Back' : authMode === 'signUp' ? 'Create Account' : 'Reset Password'}
+                <div className="text-center mb-10">
+                    <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-600 to-purple-600 p-4 mb-6 shadow-lg shadow-indigo-200 dark:shadow-none animate-in zoom-in duration-500">
+                        <Lock className="w-full h-full text-white" />
+                    </div>
+                    <h2 className="text-3xl font-black tracking-tight text-neutral-900 dark:text-white mb-3">
+                        {authMode === 'signIn' ? 'Welcome Back' : authMode === 'signUp' ? 'Get Started' : 'Lost Access?'}
                     </h2>
-                    <p className="text-neutral-500 text-sm">
+                    <p className="text-neutral-500 dark:text-neutral-400 text-base font-medium max-w-[280px] mx-auto leading-relaxed">
                         {authMode === 'signIn'
-                            ? 'Sign in to unlock Pro features and save your work.'
+                            ? 'The ultimate AI document workflow awaits.'
                             : authMode === 'signUp'
-                                ? 'Join PDFauto.ai to start automating your documents.'
-                                : 'Enter your email to receive a password reset link.'}
+                                ? 'Join the future of PDF automation today.'
+                                : 'No worries, we will send you a secure link.'}
                     </p>
                 </div>
 
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <form onSubmit={handleSubmit} className="space-y-6">
                     <div>
-                        <label className="block text-xs font-bold uppercase tracking-widest text-neutral-500 mb-2">Email Address</label>
-                        <div className="relative">
-                            <Mail className="absolute left-4 top-3.5 w-5 h-5 text-neutral-400" />
+                        <label className="block text-[11px] font-black uppercase tracking-[0.2em] text-neutral-400 dark:text-neutral-500 mb-2.5 ml-1">Email Identifier</label>
+                        <div className="relative group">
+                            <Mail className="absolute left-4 top-4 w-5 h-5 text-neutral-400 group-focus-within:text-indigo-500 transition-colors" />
                             <input
                                 type="email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                                 required
-                                className="w-full bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl py-3 pl-12 pr-4 text-neutral-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
-                                placeholder="you@example.com"
+                                className="w-full bg-neutral-50/50 dark:bg-neutral-800/50 border border-neutral-200 dark:border-neutral-700/50 rounded-2xl py-4 pl-12 pr-4 text-neutral-900 dark:text-white focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all placeholder:text-neutral-300 dark:placeholder:text-neutral-600"
+                                placeholder="name@example.com"
                             />
                         </div>
                     </div>
 
                     {authMode !== 'forgotPassword' && (
                         <div>
-                            <div className="flex justify-between items-center mb-2">
-                                <label className="block text-xs font-bold uppercase tracking-widest text-neutral-500">Password</label>
+                            <div className="flex justify-between items-center mb-2.5 ml-1">
+                                <label className="block text-[11px] font-black uppercase tracking-[0.2em] text-neutral-400 dark:text-neutral-500">Security Key</label>
                                 {authMode === 'signIn' && (
                                     <button
                                         type="button"
                                         onClick={() => setAuthMode('forgotPassword')}
-                                        className="text-xs font-bold text-indigo-600 hover:text-indigo-500"
+                                        className="text-[11px] font-black uppercase tracking-widest text-indigo-600 hover:text-indigo-500 transition-colors"
                                     >
-                                        Forgot Password?
+                                        Forgot?
                                     </button>
                                 )}
                             </div>
-                            <div className="relative">
-                                <Lock className="absolute left-4 top-3.5 w-5 h-5 text-neutral-400" />
+                            <div className="relative group">
+                                <Lock className="absolute left-4 top-4 w-5 h-5 text-neutral-400 group-focus-within:text-indigo-500 transition-colors" />
                                 <input
-                                    type="password"
+                                    type={showPassword ? "text" : "password"}
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
                                     required
                                     minLength={6}
-                                    className="w-full bg-neutral-50 dark:bg-neutral-800 border border-neutral-200 dark:border-neutral-700 rounded-xl py-3 pl-12 pr-4 text-neutral-900 dark:text-white focus:ring-2 focus:ring-indigo-500 outline-none transition-all"
+                                    className="w-full bg-neutral-50/50 dark:bg-neutral-800/50 border border-neutral-200 dark:border-neutral-700/50 rounded-2xl py-4 pl-12 pr-12 text-neutral-900 dark:text-white focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 outline-none transition-all placeholder:text-neutral-300 dark:placeholder:text-neutral-600"
                                     placeholder="••••••••"
                                 />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute right-4 top-4 p-0.5 text-neutral-400 hover:text-neutral-600 dark:hover:text-neutral-200 transition-colors"
+                                >
+                                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                                </button>
                             </div>
                         </div>
                     )}
@@ -143,41 +158,44 @@ export const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold uppercase tracking-widest transition-all disabled:opacity-50 flex items-center justify-center shadow-lg shadow-indigo-200 dark:shadow-none"
+                        className="w-full py-4 relative group overflow-hidden bg-neutral-900 dark:bg-white text-white dark:text-neutral-900 rounded-2xl font-black uppercase tracking-[0.2em] text-xs transition-all active:scale-[0.98] disabled:opacity-50 disabled:active:scale-100 shadow-xl shadow-neutral-200 dark:shadow-none h-[60px]"
                     >
-                        {loading ? (
-                            <Loader2 className="w-5 h-5 animate-spin" />
-                        ) : (
-                            authMode === 'signIn' ? "Sign In" : authMode === 'signUp' ? "Create Account" : "Send Reset Link"
-                        )}
+                        <div className="absolute inset-0 bg-gradient-to-r from-indigo-600 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity" />
+                        <span className="relative z-10 flex items-center justify-center gap-2">
+                            {loading ? (
+                                <Loader2 className="w-5 h-5 animate-spin" />
+                            ) : (
+                                <>
+                                    {authMode === 'signIn' ? "Authorize" : authMode === 'signUp' ? "Create Account" : "Get Reset Link"}
+                                </>
+                            )}
+                        </span>
                     </button>
                 </form>
 
                 {message && (
-                    <div className={`mt-6 p-4 rounded-xl text-sm font-medium ${message.type === 'success' ? 'bg-green-50 text-green-600 dark:bg-green-900/20 dark:text-green-400' : 'bg-red-50 text-red-600 dark:bg-red-900/20 dark:text-red-400'}`}>
-                        {message.text}
+                    <div className={`mt-8 p-5 rounded-2xl flex items-start gap-3 animate-in slide-in-from-top-2 duration-300 ${message.type === 'success'
+                            ? 'bg-green-500/10 text-green-600 dark:text-green-400 border border-green-500/20'
+                            : 'bg-red-500/10 text-red-600 dark:text-red-400 border border-red-500/20'
+                        }`}>
+                        {message.type === 'success' ? <CheckCircle2 className="w-5 h-5 shrink-0 mt-0.5" /> : <X className="w-5 h-5 shrink-0 mt-0.5" />}
+                        <p className="text-sm font-semibold leading-snug">{message.text}</p>
                     </div>
                 )}
 
                 {authMode !== 'forgotPassword' && (
-                    <div className="mt-8 text-center">
-                        <p className="text-sm text-neutral-500">
-                            {authMode === 'signIn' ? "Don't have an account?" : "Already have an account?"}{' '}
+                    <div className="mt-10 text-center border-t border-neutral-100 dark:border-neutral-800/50 pt-8">
+                        <p className="text-sm font-medium text-neutral-500 dark:text-neutral-400">
+                            {authMode === 'signIn' ? "New to PDFauto.ai?" : "Already have an account?"}{' '}
                             <button
                                 onClick={toggleMode}
-                                className="font-bold text-indigo-600 hover:text-indigo-500"
+                                className="text-indigo-600 dark:text-indigo-400 font-bold hover:underline underline-offset-4 decoration-2"
                             >
                                 {authMode === 'signIn' ? 'Sign Up' : 'Sign In'}
                             </button>
                         </p>
                     </div>
                 )}
-
-                <div className="mt-8 text-center">
-                    <p className="text-xs text-neutral-400">
-                        By continuing, you agree to our Terms of Service and Privacy Policy.
-                    </p>
-                </div>
             </div>
         </div>
     );
